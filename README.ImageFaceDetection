@@ -114,7 +114,7 @@ Lang Type:
 	PortNumber:  1
 	Description: detected face position.
 	             format : (If two faces are detected...)
-	             [ [x11, y11, x12, y12], [x21, y21, x22, y22]]
+	             [[x11, y11, x12, y12], [x21, y21, x22, y22]]
 	PortType: 
 	DataType:    RTC::TimedLongSeq
 	MaxOut: 

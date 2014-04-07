@@ -284,7 +284,6 @@ RTC::ReturnCode_t ImageFaceDetection::onExecute(RTC::UniqueId ec_id)
     m_inIn.read();
     if (convertImgToCvMat(m_in.data, m_srcImage)) {
       std::vector<cv::Rect> faces;
-
       cv::cvtColor(m_srcImage, m_grayImage, CV_BGR2GRAY );
       cv::equalizeHist(m_grayImage, m_grayImage);
 
@@ -296,9 +295,15 @@ RTC::ReturnCode_t ImageFaceDetection::onExecute(RTC::UniqueId ec_id)
 				     0|CV_HAAR_SCALE_IMAGE,
 				     cv::Size(30, 30));
 
+      m_position.data.length(faces.size() * 4);
       for(size_t i = 0;i < faces.size();i++) {
 	cv::Point center(faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5);
 	cv::ellipse(m_srcImage, center, cv::Size(faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, cv::Scalar( 255, 0, 255 ), 4, 8, 0 );
+
+	m_position.data[i*4+0] = faces[i].x;
+	m_position.data[i*4+1] = faces[i].y;
+	m_position.data[i*4+2] = faces[i].x + faces[i].width;
+	m_position.data[i*4+3] = faces[i].y + faces[i].height;
       }
       convertCvMatToImg(m_srcImage, m_out.data, FMT_RGB);
 
@@ -306,7 +311,7 @@ RTC::ReturnCode_t ImageFaceDetection::onExecute(RTC::UniqueId ec_id)
       m_out.data.captured_time = m_out.tm;
       m_outOut.write();
 
-
+      
 	/**
 	Mat faceROI = m_grayImage( faces[i] );
 	std::vector<cv::Rect> eyes;
